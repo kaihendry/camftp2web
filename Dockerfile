@@ -2,25 +2,31 @@ FROM alpine:latest
 
 MAINTAINER Kai Hendry <hendry@iki.fi>
 
-# Install dependencies.
 RUN apk upgrade --update --available && \
     apk add \
+      ffmpeg \
+      lighttpd \
+      lighttpd-mod_auth \
       vsftpd \
+      bash \
+      inotify-tools \
+      supervisor \
     && rm -f /var/cache/apk/*
 
-EXPOSE 21/tcp
-ENV LANG C
-
-# Configure vsftpd.
-ADD start.sh /start.sh
+EXPOSE 21 80
 
 RUN mkdir -pm 0711 /var/empty/vsftpd
-
-# https://github.com/mikz/dockerfiles/blob/master/vsftpd/vsftpd.sh
-# RUN adduser -D 888
-
-VOLUME ["/home"]
-
 ADD vsftpd.conf /etc/vsftpd/vsftpd.conf
 
-CMD /start.sh
+# docker cp ftp:/etc/lighttpd/lighttpd.conf .
+ADD lighttpd.conf /etc/lighttpd/lighttpd.conf
+ADD move.sh /bin/
+
+ADD supervisor.d /etc/supervisor.d/
+
+# Ftp account(s)
+RUN adduser -D user && echo 'user:passwd' | chpasswd
+# Web access account
+ADD users.txt /var/www/
+
+CMD supervisord -n -c /etc/supervisord.conf

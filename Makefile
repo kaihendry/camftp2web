@@ -1,7 +1,7 @@
 NAME=ftp
 REPO=hendry/$(NAME)
 
-.PHONY: admin bash start build
+.PHONY: start stop build sh
 
 all: build
 
@@ -12,7 +12,7 @@ push:
 	docker push $(REPO)
 
 start:
-	docker run -d -v /srv/ftp:/home --name $(NAME) -p 21:21 $(REPO)
+	docker run -d --name $(NAME) -p 21:21 -p 88:80 $(REPO)
 
 stop:
 	docker stop $(NAME)
