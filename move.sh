@@ -15,7 +15,7 @@ trap "kill $ipid; rm -f $np" EXIT
 while read -r dir _ fn
 do
 
-	od=$wdir/$(date +%Y-%m-%d) # output directory with date
+	od=$wdir/$(echo $dir | cut -d"/" -f3)/$(date +%Y-%m-%d) # output directory with date prefixed by user's home dir
 	mkdir -p $od || true
 
 	case "${fn##*.}" in
