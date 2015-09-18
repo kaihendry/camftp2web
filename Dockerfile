@@ -5,28 +5,26 @@ MAINTAINER Kai Hendry <hendry@iki.fi>
 RUN apk upgrade --update --available && \
     apk add \
       ffmpeg \
-      lighttpd \
-      lighttpd-mod_auth \
       vsftpd \
       bash \
       inotify-tools \
       supervisor \
     && rm -f /var/cache/apk/*
 
-EXPOSE 21 80
+EXPOSE 21
 
 RUN mkdir -pm 0711 /var/empty/vsftpd
 ADD vsftpd.conf /etc/vsftpd/vsftpd.conf
+# Setup FTP users
+COPY ftp-users.txt /etc/ftp-users.txt
+RUN while read -r user; do adduser -D "${user%%:*}" && echo "$user" | chpasswd; done < /etc/ftp-users.txt
 
-# docker cp ftp:/etc/lighttpd/lighttpd.conf .
-ADD lighttpd.conf /etc/lighttpd/lighttpd.conf
+# FFMPEG
 ADD move.sh /bin/
 
 ADD supervisor.d /etc/supervisor.d/
 
-# Ftp account(s)
-RUN adduser -D user && echo 'user:passwd' | chpasswd
-# Web access account
-ADD users.txt /var/www/
+VOLUME /home/
+VOLUME /var/www/cam
 
 CMD supervisord -n -c /etc/supervisord.conf

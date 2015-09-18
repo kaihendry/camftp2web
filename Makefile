@@ -12,7 +12,7 @@ push:
 	docker push $(REPO)
 
 start:
-	docker run -d --name $(NAME) -p 21:21 -p 88:80 $(REPO)
+	docker run -d --name $(NAME) -p 21:21 -v /mnt/2tb/cam:/var/www/cam $(REPO)
 
 stop:
 	docker stop $(NAME)
