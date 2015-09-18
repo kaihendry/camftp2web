@@ -8,7 +8,6 @@ RUN apk upgrade --update --available && \
       vsftpd \
       bash \
       inotify-tools \
-      supervisor \
     && rm -f /var/cache/apk/*
 
 EXPOSE 21
@@ -22,9 +21,8 @@ RUN while read -r user; do adduser -D "${user%%:*}" && echo "$user" | chpasswd; 
 # FFMPEG
 ADD move.sh /bin/
 
-ADD supervisor.d /etc/supervisor.d/
-
 VOLUME /home/
 VOLUME /var/www/cam
 
-CMD supervisord -n -c /etc/supervisord.conf
+ADD start.sh /start.sh
+CMD /start.sh
