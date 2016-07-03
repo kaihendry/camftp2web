@@ -1,13 +1,11 @@
 [Unit]
-Description=ftp camera
+Description=FTP service
+Requires=docker.service
 After=docker.service
-Require=docker.service
 
 [Service]
-ExecStart=/bin/bash -c '/usr/bin/docker start -a ftp || /usr/bin/docker run -d --name ftp -p 21:21 -v /mnt/2tb/cam:/var/www/cam -v /home/hendry/docker/ftp/ftp-users.txt:/etc/ftp-users.txt hendry/ftp'
+ExecStart=/usr/bin/docker run --rm --name ftp -p 21:21 -v /mnt/raid1/cam:/var/www/cam -v /home/hendry/docker/ftp-users.txt:/etc/ftp-users.txt hendry/ftp
 ExecStop=/usr/bin/docker stop ftp
-RestartSec=5s
-Restart=always
 
 [Install]
 WantedBy=multi-user.target

@@ -12,7 +12,7 @@ push:
 	docker push $(REPO)
 
 start:
-	docker run -d --name $(NAME) -p 21:21 -v /mnt/2tb/cam:/var/www/cam -v $(PWD)/ftp-users.txt:/etc/ftp-users.txt $(REPO)
+	docker run -d -p 21:21 -v /mnt/2tb/cam:/var/www/cam -v $(PWD)/ftp-users.txt:/etc/ftp-users.txt $(REPO)
 
 stop:
 	docker stop $(NAME)
